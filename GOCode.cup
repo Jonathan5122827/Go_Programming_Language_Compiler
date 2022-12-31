@@ -1,0 +1,279 @@
+import java_cup.runtime.*;
+import java.util.*;
+
+
+action code {: SymbolTable currentEnv, env; :};
+
+
+terminal  SEMICOLON;
+terminal PERIOD;
+terminal COMMA;
+terminal LBRACE;
+terminal RBRACE;
+terminal LT;
+terminal LE;
+terminal GT;
+terminal GE;
+terminal ASSIGN;
+terminal EQ;
+terminal NQ;
+terminal OR;
+terminal REF;
+terminal LPAREN;
+terminal RPAREN;
+terminal PLUS;
+terminal MINUS;
+terminal TIMES;
+terminal DIVID;
+terminal LBRACK;
+terminal RBRACK;
+terminal PACKAGE;
+terminal MAIN;
+terminal IMPORT;
+terminal FUNC;
+terminal VAR;
+terminal String INT;
+terminal FMT;
+terminal SCANF;
+terminal FOR;
+terminal PRINTLN;
+terminal RETURN;
+terminal IF;
+terminal ELSE;
+terminal FTM2;
+terminal D;
+terminal String INTEGER;
+terminal String ID;
+terminal QUOTE;
+//terminal EOF;
+
+//action code {: SymbolTable currentEnv, env; :};
+
+
+//non terminal program;
+non terminal Code sourceFile;
+non terminal Code mainDecl;
+//non terminal functionDeclList;
+non terminal SymbolTable functionDecl;
+non terminal Declarator parameterDecl;
+non terminal Type type;
+non terminal String block;
+//non terminal varDeclList;
+non terminal varDecl;
+non terminal String statementList;
+non terminal String statement;
+non terminal ExpressionCode expression;
+non terminal ExpressionCode conjunction;
+non terminal ExpressionCode negation;
+non terminal ExpressionCode relation;
+non terminal rel_op;
+non terminal ExpressionCode addition;
+non terminal add_operator;
+non terminal ExpressionCode multiplication;
+non terminal mul_op;
+non terminal ExpressionCode factor;
+non terminal ExpressionCode primaryExpr;
+non terminal String variable;
+
+non terminal SymbolTable functionDeclList;
+//non terminal functionDeclList;
+non terminal LinkedList<Type> parameterDeclListOption;
+non terminal LinkedList<Type> parameterDeclList;
+non terminal SymbolTable blockOption;
+non terminal varDeclList;
+non terminal ExpressionCode subscriptList;
+non terminal ExpressionCode expressionListOption;
+non terminal ExpressionCode expressionList;
+non terminal elseOption;
+
+start with sourceFile;
+
+//sourceFile ::=
+  //   {:
+    //   currentEnv = env;         /* save current env */
+      // env = new SymbolTable (); /* start new scope */
+     //:}
+     //PACKAGE MAIN IMPORT FTM2 functionDeclList mainDecl
+     //{: RESULT = env;  env = currentEnv; /* restore env */ :} ;
+
+sourceFile ::= PACKAGE MAIN IMPORT FTM2 {: env = new SymbolTable (null); /* start new scope */ :} functionDeclList mainDecl:ma {: RESULT = ma; :} ;
+
+
+//sourceFile ::= PACKAGE MAIN IMPORT FTM2 functionDeclList mainDecl ;
+
+//mainDecl ::= FUNC MAIN LPAREN RPAREN LBRACE block:bo RBRACE ;
+
+mainDecl ::= FUNC MAIN LPAREN RPAREN 
+    {:
+      currentEnv = env;                   /* save current env */
+      env = new SymbolTable (currentEnv); /* start new scope */
+        Code . initLabel ();
+        Code . initTemp ();
+
+      currentEnv . enterFunc ("main", null, null, env);
+    :}
+    LBRACE block:bo RBRACE 
+    {:
+      currentEnv . enterFuncCode ("main", ""); /* add code to function entry */
+	 RESULT = new Code (env, bo);
+      env = env . parent (); /* restore env */
+    :} ;
+
+
+functionDeclList ::= functionDeclList functionDecl | ;
+
+//functionDecl ::= FUNC ID:id LPAREN parameterDeclListOption RPAREN type LBRACE blockOption:bo RETURN expression SEMICOLON RBRACE {: env.enterFunc(id,bo,""); :}  ;
+
+functionDecl ::= FUNC ID:funcId 
+    {:
+      currentEnv = env;                   /* save current env */
+      env = new SymbolTable (currentEnv); /* start new scope */
+    :}
+    LPAREN parameterDeclListOption:paramTypes RPAREN type:funcType
+    {:
+      /* to allow recursive calls */
+      currentEnv . enterFunc (funcId, funcType, paramTypes, env);
+	Code . initLabel ();
+	Code . initTemp ();
+    :}
+    LBRACE blockOption RETURN expression SEMICOLON RBRACE 
+    {:
+      currentEnv . enterFuncCode (funcId, ""); /* add code to function entry */
+//	RESULT = new Code (env, code);
+      env = env . parent (); /* restore env */
+    :} ;
+
+
+//parameterDeclListOption ::= parameterDeclList | ;
+
+parameterDeclListOption ::= 
+    parameterDeclList:paramTypes {: RESULT = paramTypes; :}
+  | {: RESULT = new LinkedList<Type> (); :} ;
+
+
+//parameterDeclList ::= parameterDecl | parameterDeclList COMMA parameterDecl;
+
+parameterDeclList ::= 
+    parameterDecl:decl 
+    {:
+      env . enterVar (decl . id (), decl . type ());
+      RESULT = new LinkedList<Type> ();
+      RESULT . add (decl . type ());
+    :} 
+  | parameterDeclList:paramTypes COMMA parameterDecl:decl
+    {:
+      env . enterVar (decl . id (), decl . type ());
+      paramTypes . add (decl . type ());
+      RESULT = paramTypes;
+    :} ;
+
+//parameterDecl ::= ID:id type:ty {: env.enterVar(id,ty); :}; 
+
+parameterDecl ::= ID:varId type:varType
+    {: RESULT = new Declarator (varId, varType); :} ;
+
+
+//type ::= INT:in {: in = "int" ; RESULT = in; :}
+//		| LBRACK INTEGER RBRACK type:ty {:RESULT = ty;:} ;
+
+type ::= INT {: RESULT = new IntegerType (); :}
+  | LBRACK INTEGER:dimension RBRACK type:baseType 
+    {: RESULT = new ArrayType (Integer . parseInt (dimension), baseType); :} ;
+
+
+blockOption ::= block | ;
+//blockOption ::= block:bo | ;
+
+block ::= varDeclList statementList:scode {:RESULT = scode; :};
+
+varDeclList ::= varDeclList varDecl SEMICOLON | varDecl SEMICOLON ; 
+
+//varDecl ::= VAR ID:id type:ty {: env.enterVar(id,ty); :};
+//varDecl ::= VAR ID type ;
+
+varDecl ::= VAR ID:varId type:varType
+    {: env . enterVar (varId, varType); :} ;
+
+
+statementList ::= statement:code SEMICOLON	{: RESULT = code; :}
+		| statementList:listcode statement:code SEMICOLON {: RESULT = listcode + code; :};
+
+statement ::= IF expression LBRACE statementList RBRACE elseOption
+		| FOR expression LBRACE statementList RBRACE 
+		| variable:id ASSIGN expression:exp {: RESULT = exp.code() + " " + id + " = " + exp.place() + ";\n"; :}
+		| FMT PERIOD SCANF LPAREN D COMMA REF ID RPAREN
+		| FMT PERIOD PRINTLN LPAREN expression RPAREN;
+
+elseOption ::= ELSE LBRACE statementList RBRACE | ;
+
+expression ::= expression OR OR conjunction
+		| conjunction:con 
+      {:
+        String exprTemp = Code . newTemp ();
+//        env . enterVar (exprTemp,null);
+        RESULT = new ExpressionCode (con . code ()
+          + "  " + exprTemp + " = "  + con . place () + ";\n", exprTemp);
+      :} ;
+
+conjunction ::= conjunction REF REF negation
+		| negation:negCode 
+      {:
+        String termTemp = Code . newTemp ();
+  //      env . enterVar (termTemp,null);
+        RESULT = new ExpressionCode (negCode . code ()
+          + "  " + termTemp + " = " + negCode . place () + " "  + ";\n", termTemp);
+      :};
+
+negation ::= relation:relCode {: RESULT = relCode; :};
+
+relation ::= relation:rcode rel_op addition:acode 
+
+     {:
+        String termTemp = Code . newTemp ();
+        env . enterVar (termTemp,null);
+        RESULT = new ExpressionCode (rcode . code () + acode . code ()
+          + "  " + termTemp + " = " + rcode . place () +  " " 
+                                    + acode . place () + ";\n", termTemp);
+      :}
+		| addition:acode
+     {:
+        String termTemp = Code . newTemp ();
+//        env . enterVar (termTemp, null);
+        RESULT = new ExpressionCode (acode . code ()
+          + "  " + termTemp + " = " + acode . place () +   ";\n", termTemp);
+      :} ;
+
+rel_op ::= LT
+		| GT
+		| EQ
+		| NQ
+		| LE
+		| GE ;
+
+addition ::= addition add_operator multiplication:mcode {: RESULT = mcode; :}
+		| multiplication:mcode {: RESULT = mcode; :};
+
+add_operator ::= PLUS
+		| MINUS ; 
+
+multiplication ::= multiplication mul_op factor:fcode {: RESULT = fcode; :}
+		| factor:fcode {: RESULT = fcode; :};
+mul_op ::= TIMES
+		| DIVID ;
+
+factor ::= add_operator primaryExpr:pcode {: RESULT = pcode; :}
+		| primaryExpr:pcode {: RESULT = pcode ; :} ;
+
+primaryExpr ::= variable:id  {: RESULT = new ExpressionCode ("", id); :}
+		| INTEGER:intval {: RESULT = new ExpressionCode ("", intval); :}
+		| LPAREN expression:ecode RPAREN {: RESULT = ecode; :}
+		| ID LPAREN expressionListOption RPAREN ;
+
+variable ::= ID:id subscriptList {: RESULT = id; :};
+
+subscriptList ::= subscriptList:scode LBRACK expression RBRACK {: RESULT = scode; :} | ;
+
+expressionListOption ::= expressionList:ecode {: RESULT = ecode; :}| ;
+
+expressionList	::= expressionList COMMA expression:ecode {: RESULT = ecode; :} | expression:ecode {: RESULT = ecode; :};
+

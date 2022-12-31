@@ -1,0 +1,398 @@
+Script started on 2022-05-11 22:54:00-0500
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ cup -parser GOParserCode -symbols Symbol GOCode.cup
+Warning : Terminal "QUOTE" was declared but never used
+------- CUP v0.11a beta 20060608 Parser Generation Summary -------
+  0 errors and 1 warning
+  42 terminals, 34 non-terminals, and 66 productions declared, 
+  producing 137 unique parse states.
+  1 terminal declared but not used.
+  0 non-terminal declared but not used.
+  0 productions never reduced.
+  0 conflicts detected (0 expected).
+  Code written to "GOParserCode.java", and "Symbol.java".
+---------------------------------------------------- (v0.11a beta 20060608)
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ javac -cp .:java-cup-11b-runtime.jar GOParsCode.java
+Note: ./GOParserCode.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: ./GOParserCode.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ java -cp .:java-cup-11b-runtime.jar GOParsCode test < test1.go
+Source Program
+--------------
+
+
+
+
+
+package main
+
+import "fmt"
+
+func main() {
+  var q int; var r int; var x int; var y int;
+  fmt . Scanf ("%d", &x);
+  fmt . Scanf ("%d", &y);
+  q = 0;
+  r = x;
+  for r >= y {
+    q = q + 1;
+    r = r - y;
+  };
+  fmt . Println (q);
+  fmt . Println (r);
+}
+
+Identifier Table for main
+------------------------
+
+ID   Category Type
+--  -------- ----
+_T7  VARIABLE null
+q    VARIABLE int
+r    VARIABLE int
+x    VARIABLE int
+y    VARIABLE int
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ cat test.c
+int main ()	{
+ int _T7;
+ int q;
+ int r;
+ int x;
+ int y;
+nullnull  _T0 = 0;
+  _T1 = _T0 ;
+  _T2 = _T1;
+ q = _T2;
+  _T3 = x;
+  _T4 = _T3 ;
+  _T5 = _T4;
+ r = _T5;
+nullnullnull return 0;
+}
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ cat test.cjava -cp .:java-cup-11b-runtime.jar GOParsCode test < test1.go[1P.go2.go
+Source Program
+--------------
+
+
+
+
+
+package main
+
+import "fmt"
+
+func main() {
+  var my_list [100] int;
+  var my_list_tl [100] int;
+  var r int; var h int; var i int;
+  r = 2;
+  for r < 5 {
+    my_list [r - 2] = r;
+    r = r + 1;
+  };
+  h = my_list [0];
+  i = r;
+  for i > 0 {
+    my_list_tl [i - 1] = my_list [i];
+    i = i - 1;
+  };
+  fmt . Println (h);
+  fmt . Println (my_list_tl [0]);
+}
+
+Identifier Table for main
+------------------------
+
+ID         Category Type
+--        -------- ----
+_T26       VARIABLE null
+_T4        VARIABLE null
+h          VARIABLE int
+i          VARIABLE int
+my_list    VARIABLE array (100, int)
+my_list_tl VARIABLE array (100, int)
+r          VARIABLE int
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ java -cp .:java-cup-11b-runtime.jar GOParsCode test < test2.go[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat test.c[K
+int main ()	{
+ int _T26;
+ int _T4;
+ int h;
+ int i;
+ int my_list;
+ int my_list_tl;
+ int r;
+  _T0 = 2;
+  _T1 = _T0 ;
+  _T2 = _T1;
+ r = _T2;
+null  _T19 = my_list;
+  _T20 = _T19 ;
+  _T21 = _T20;
+ h = _T21;
+  _T22 = r;
+  _T23 = _T22 ;
+  _T24 = _T23;
+ i = _T24;
+nullnullnull return 0;
+}
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ cat test.cjava -cp .:java-cup-11b-runtime.jar GOParsCode test < test2.go[1P.go3.go
+Source Program
+--------------
+
+
+
+
+
+package main
+
+import "fmt"
+
+func area (x int, y int, h int) int {
+  var z int;
+  z = 2 * (x * y + (x * h) + y * h);
+  return z;
+}
+
+func main() {
+  var a int; var b int; var h int; var s int;
+  fmt . Scanf ("%d", &a);
+  fmt . Scanf ("%d", &b);
+  fmt . Scanf ("%d", &h);
+  s = area (a, b, h);Error in invoking parser/lexer
+java.lang.NullPointerException
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ java -cp .:java-cup-11b-runtime.jar GOParsCode test < test3.go[1P.go4.go
+Source Program
+--------------
+
+
+
+
+
+package main
+
+import "fmt"
+
+func facto (x int) int {
+  var s int;
+  if x == 1 {
+    s = 1;
+  } else {
+    s = x * facto (x - 1);Error in invoking parser/lexer
+java.lang.NullPointerException
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ java -cp .:java-cup-11b-runtime.jar GOParsCode test < test4.go[1P.go5.go
+Source Program
+--------------
+
+
+
+
+
+package main
+
+import "fmt"
+
+func f (a [100] int, i int) int {
+  var x int;
+  x = a [i];
+  a [i] = 0;
+  i = 622;
+  return x;
+}
+
+func main () {
+  var b [100] int;
+  var i int; var n int;
+  n = 40;
+  i = 0;
+  for i < 100 {
+    b [i] = i * i;
+    i = i + 1;
+  };
+  fmt . Println (n);
+  fmt . Println (f (b, n))Error in invoking parser/lexer
+java.lang.NullPointerException
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ java -cp .:java-cup-11b-runtime.jar GOParsCode test < test5.go[1P.go6.go
+Source Program
+--------------
+
+
+
+
+
+package main
+
+import "fmt"
+
+func main () {
+  var matrixA [4][3] int;
+  var matrixB [3][2] int;
+  var matrixC [4][2] int;
+  var i int; var j int; var k int; 
+  var n1 int; var n2 int; var n3 int; 
+  n1 = 4; n2 = 3; n3 = 2;
+  
+  matrixA [0][0] = 14; matrixA [0][1] =  9; matrixA [0][2] =  3;
+  matrixA [1][0] =  2; matrixA [1][1] = 11; matrixA [1][2] = 15;
+  matrixA [2][0] =  0; matrixA [2][1] = 12; matrixA [2][2] = 17;
+  matrixA [3][0] =  5; matrixA [3][1] =  2; matrixA [3][2] =  3;
+  matrixB [0][0] = 12; matrixB [0][1] = 25; 
+  matrixB [1][0] =  9; matrixB [1][1] = 10;
+  matrixB [2][0] =  8; matrixB [2][1] =  5;
+  i = 0;
+  for i < n1 {
+    j = 0;
+    for j < n3 {
+      k = 0;
+      matrixC [i][j] = 0;
+      for k < n2 {
+        matrixC [i][j] = matrixC [i][j] + matrixA [i][k] * matrixB [k][j];
+        k = k + 1;
+      };
+      j = j + 1;
+    };
+    i = i + 1;
+  };
+  i = 0;
+  for i < n1 {
+    j = 0;
+    for j < n3 {
+      fmt . Println (matrixC [i][j]);
+      j = j + 1;
+    };
+    i = i + 1;
+  };
+}
+
+Identifier Table for main
+------------------------
+
+ID      Category Type
+--     -------- ----
+_T175   VARIABLE null
+_T182   VARIABLE null
+_T198   VARIABLE null
+_T241   VARIABLE null
+_T248   VARIABLE null
+i       VARIABLE int
+j       VARIABLE int
+k       VARIABLE int
+matrixA VARIABLE array (4, array (3, int))
+matrixB VARIABLE array (3, array (2, int))
+matrixC VARIABLE array (4, array (2, int))
+n1      VARIABLE int
+n2      VARIABLE int
+n3      VARIABLE int
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ java -cp .:java-cup-11b-runtime.jar GOParsCode test < test6.go5.go4.go3.go[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat test.c[Kjava -cp .:java-cup-11b-runtime.jar GOParsCode test < test2.go[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat test.c[K
+int main ()	{
+ int _T175;
+ int _T182;
+ int _T198;
+ int _T241;
+ int _T248;
+ int i;
+ int j;
+ int k;
+ int matrixA;
+ int matrixB;
+ int matrixC;
+ int n1;
+ int n2;
+ int n3;
+  _T0 = 4;
+  _T1 = _T0 ;
+  _T2 = _T1;
+ n1 = _T2;
+  _T3 = 3;
+  _T4 = _T3 ;
+  _T5 = _T4;
+ n2 = _T5;
+  _T6 = 2;
+  _T7 = _T6 ;
+  _T8 = _T7;
+ n3 = _T8;
+  _T15 = 14;
+  _T16 = _T15 ;
+  _T17 = _T16;
+ matrixA = _T17;
+  _T24 = 9;
+  _T25 = _T24 ;
+  _T26 = _T25;
+ matrixA = _T26;
+  _T33 = 3;
+  _T34 = _T33 ;
+  _T35 = _T34;
+ matrixA = _T35;
+  _T42 = 2;
+  _T43 = _T42 ;
+  _T44 = _T43;
+ matrixA = _T44;
+  _T51 = 11;
+  _T52 = _T51 ;
+  _T53 = _T52;
+ matrixA = _T53;
+  _T60 = 15;
+  _T61 = _T60 ;
+  _T62 = _T61;
+ matrixA = _T62;
+  _T69 = 0;
+  _T70 = _T69 ;
+  _T71 = _T70;
+ matrixA = _T71;
+  _T78 = 12;
+  _T79 = _T78 ;
+  _T80 = _T79;
+ matrixA = _T80;
+  _T87 = 17;
+  _T88 = _T87 ;
+  _T89 = _T88;
+ matrixA = _T89;
+  _T96 = 5;
+  _T97 = _T96 ;
+  _T98 = _T97;
+ matrixA = _T98;
+  _T105 = 2;
+  _T106 = _T105 ;
+  _T107 = _T106;
+ matrixA = _T107;
+  _T114 = 3;
+  _T115 = _T114 ;
+  _T116 = _T115;
+ matrixA = _T116;
+  _T123 = 12;
+  _T124 = _T123 ;
+  _T125 = _T124;
+ matrixB = _T125;
+  _T132 = 25;
+  _T133 = _T132 ;
+  _T134 = _T133;
+ matrixB = _T134;
+  _T141 = 9;
+  _T142 = _T141 ;
+  _T143 = _T142;
+ matrixB = _T143;
+  _T150 = 10;
+  _T151 = _T150 ;
+  _T152 = _T151;
+ matrixB = _T152;
+  _T159 = 8;
+  _T160 = _T159 ;
+  _T161 = _T160;
+ matrixB = _T161;
+  _T168 = 5;
+  _T169 = _T168 ;
+  _T170 = _T169;
+ matrixB = _T170;
+  _T171 = 0;
+  _T172 = _T171 ;
+  _T173 = _T172;
+ i = _T173;
+null  _T237 = 0;
+  _T238 = _T237 ;
+  _T239 = _T238;
+ i = _T239;
+null return 0;
+}
+]0;jmj0264@cse04: ~/4650/4650_a4_v2jmj0264@cse04:~/4650/4650_a4_v2$ exit
+exit
+
+Script done on 2022-05-11 22:56:24-0500
